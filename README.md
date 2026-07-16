@@ -50,8 +50,6 @@ YEARS = ("2021", "2022", "2023", "2024", "2025")
 # Tên người thực hiện (sẽ ghi vào file log thành công)
 COLLECTOR_NAME = "Nguyễn Trần Bảo Thái"
 
----
-
 ## 🛠️ Hướng Dẫn Cấu Hình Tham Số (Tùy Chỉnh Theo Nhu Cầu)
 
 Để tùy biến công cụ này, bạn hãy mở file code và tìm đến mục **`Configuration`** (khoảng dòng 34-45). Dưới đây là giải thích chi tiết từng thông số bạn có thể chỉnh sửa:
@@ -68,8 +66,6 @@ COLLECTOR_NAME = "Nguyễn Trần Bảo Thái"
 | **`MAX_RETRY_ROUNDS`** | `3` | **Số vòng thử lại bằng Selenium**. Nếu tải đa luồng thất bại, trình duyệt Chrome ẩn sẽ khởi chạy và thử lại tối đa 3 lần với nhiều chiến lược click chuột khác nhau. |
 | **`PAGE_WAIT_SECONDS`** | `15` | Thời gian tối đa (giây) chờ trang web CafeF tải xong trước khi báo lỗi Timeout. Tăng lên nếu mạng của bạn bị chậm/chập chờn. |
 | **`DOWNLOAD_WAIT_SECONDS`** | `20` | Thời gian tối đa (giây) chờ trình duyệt tải trọn vẹn tệp PDF về máy trước khi chuyển sang tác vụ khác. Hãy tăng lên nếu tệp báo cáo quá nặng (>50MB). |
-
----
 
 ## 🚀 Cách Hoạt Động Của Pipeline Tải File
 
