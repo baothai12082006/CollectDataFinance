@@ -1,0 +1,22 @@
+{
+    "paths": {
+        "root_dir": "/content/Du_Lieu_BCTC_Cac_Cong_Ty",
+        "drive_target_dir": "./Du_Lieu_BCTC_Cac_Cong_Ty",
+        "excel_path": "/content/drive/MyDrive/DanhMucTaiLieu.xlsx",
+        "tickers_da_co_json": "./Du_Lieu_BCTC_Cac_Cong_Ty/tickers_da_co.json",
+        "tickers_da_co_txt": "./Du_Lieu_BCTC_Cac_Cong_Ty/tickers_da_co.txt",
+        "tickers_can_chay_txt": "./ma.txt",
+        "successful_download_log": "./Du_Lieu_BCTC_Cac_Cong_Ty/successful_downloads.jsonl"
+    },
+    "excel_settings": {
+        "sheet_name": "DanhMucTaiLieu", 
+        "column_name": "Mã Chứng Khoán",
+        "spreadsheet_id": "ID_SHEET_CUA_BAN"
+    },
+    "crawler_settings": {
+        "collector_name": "Nguyễn Trần Bảo Thái", 
+        "years": ["2021", "2022", "2023", "2024", "2025"], 
+        "request_workers": 6, 
+        "max_retry_rounds": 3
+    }
+}
