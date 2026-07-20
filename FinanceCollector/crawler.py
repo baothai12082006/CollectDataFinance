@@ -629,6 +629,9 @@ def main() -> None:
     parser.add_argument("--drive_dir", type=str, default=default_drive_dir, help="Tùy chỉnh thư mục đồng bộ")
     parser.add_argument("--tickers", type=str, default="", help="Bơm trực tiếp chuỗi mã (ví dụ: VCB,ACB,BID)")
     
+    # BỔ SUNG: Giới hạn số lượng mã tối đa để bảo vệ dung lượng bộ nhớ
+    parser.add_argument("--max_tickers_auto", type=int, default=30, help="Giới hạn số lượng mã chạy tối đa trong chế độ Auto/An toàn")
+    
     args = parser.parse_args()
     configure_logger()
     
@@ -638,28 +641,30 @@ def main() -> None:
         LOG.info(f"Đã cập nhật thư mục đầu ra Drive: {DRIVE_TARGET_DIR}")
 
     final_tickers = []
+    is_auto_mode = False
 
     # Ưu tiên 1: Đọc từ tham số truyền trực tiếp chuỗi mã chứng khoán
     if args.tickers:
         final_tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
         LOG.info(f"Nhận diện danh sách mã truyền trực tiếp: {final_tickers}")
-        
+    
     # Ưu tiên 2: Đọc từ file .txt (Đã lấy mặc định từ config)
     elif args.input_file:
         path_txt = Path(args.input_file)
         if path_txt.exists():
             content = path_txt.read_text(encoding="utf-8")
-            # SỬA LỖI ĐỌC FILE DÍNH CHÙM (Hỗ trợ cả dấu phẩy và dấu xuống dòng)
+            # Hỗ trợ tách cả dấu phẩy, dấu cách và dấu xuống dòng
             import re
             final_tickers = [t.upper() for t in re.split(r'[,\n\s]+', content) if t.strip()]
             LOG.info(f"Đọc thành công {len(final_tickers)} mã từ file {args.input_file}")
         else:
             LOG.error(f"File danh sách mã '{args.input_file}' không tồn tại!")
 
-    # Ưu tiên 3: Dự phòng
+    # Ưu tiên 3: Dự phòng (Chế độ Auto-Pilot)
     if not final_tickers:
         try:
             final_tickers = BANK_TICKERS
+            is_auto_mode = True
             LOG.info("Chuyển sang chế độ Auto-Pilot sử dụng BANK_TICKERS...")
         except NameError:
             pass
@@ -667,6 +672,19 @@ def main() -> None:
     if not final_tickers:
         LOG.error("Hủy tiến trình: Không tìm thấy bất kỳ mã chứng khoán nào để chạy!")
         return
+
+    # ==============================================================================
+    # XỬ LÝ PHÂN TÍCH VÀ GIỚI HẠN SỐ LƯỢNG MÃ ĐỂ TRANH TRÀN DUNG LƯỢNG
+    # ==============================================================================
+    total_found = len(final_tickers)
+    if total_found > args.max_tickers_auto:
+        LOG.warning(
+            f"⚠️ CẢNH BÁO DUNG LƯỢNG: Số lượng mã cần chạy ({total_found} mã) vượt quá giới hạn an toàn cho phép ({args.max_tickers_auto} mã)."
+        )
+        final_tickers = final_tickers[:args.max_tickers_auto]
+        LOG.info(f"✂️ Đã cắt giảm danh sách, tiến hành chạy trước {len(final_tickers)} mã: {final_tickers}")
+    else:
+        LOG.info(f"✅ Danh sách mã nằm trong ngưỡng an toàn bộ nhớ. Tổng số mã sẽ cào: {total_found}")
 
     start = time.monotonic()
     run_pipeline(final_tickers)
